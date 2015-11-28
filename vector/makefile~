@@ -1,0 +1,9 @@
+object = test.o		    #def var
+out: $(object)		    
+	g++ -g -o out $(object)  
+test.o: test.cpp	    
+	g++ -g -c -std=c++11 test.cpp	      #tab twcie
+#test.s: test.cpp
+#	g++ -S test.cpp
+clean:			
+	rm *.o *.s
