@@ -5,39 +5,43 @@
 #define MAX(a, b) (a > b ? a : b)
 
 template <class T>
-class binaryTree
+struct Node
 {
-    protected:
-	struct Node
-	{
-	    T element;
-	    Node *lchild;
-	    Node *rchild;
-    
-            explicit Node() : element(), lchild(nullptr), rchild(nullptr) {}
-	};
+    T	element;
+    Node *lchild;
+    Node *rchild;
 
-    protected:
-	int   treeSize;
-	Node *root;
-
-    public:
-	explicit binaryTree() : treeSize(0), root(nullptr) {}
-	virtual ~binaryTree() {clear();}
-
-	void clear(Node *node);
-
-	int  depth(const Node *node)                            const;
-	int  size()                                             const;
-	void print_tree(std::ostream &output, const Node *node) const;
-
-	virtual void insert(const T &_element)    const = 0;
-	virtual void erase (const T &_element)          = 0;
-	//virtual void print (std::ostream &output) const = 0;
+    explicit Node(const T &_element) : element(_element), lchild(nullptr), rchild(nullptr) {}
 };
 
 template <class T>
-int binaryTree<T>::depth(const Node *node) const
+class binaryTree
+{
+    public:
+	typedef Node<T>* nodePtr;
+    protected:
+	int     treeSize;
+	nodePtr root;
+
+    public:
+	explicit binaryTree() : treeSize(0), root(nullptr) {}
+	virtual ~binaryTree()                              {clean(root);}
+
+	void clean(nodePtr node);
+
+	int  depth(const nodePtr node)                            const;
+	int  size()                                               const;
+	void print_tree(std::ostream &output)                     const;
+
+	virtual void insert(const T &_element)          = 0;
+	virtual void erase (const T &_element)          = 0;
+	//virtual void print (std::ostream &output) const = 0;
+    private:
+	void print(std::ostream &output, nodePtr node) const;
+};
+
+template <class T>
+int binaryTree<T>::depth(const nodePtr node) const
 {
     if( node == nullptr)
 	return 0;
@@ -52,17 +56,13 @@ int binaryTree<T>::size() const
 }
 
 template <class T>
-void print_tree(std::ostream &output, const Node *node) const
+void binaryTree<T>::print_tree(std::ostream &output) const
 {
-    if(node == nullptr)
-	return ;
-    output << node->element;
-    print_tree(node->lchild);
-    print_tree(node->rchild);
+    print(output, root);
 }
 
 template <class T>
-void clean(Node *node)
+void binaryTree<T>::clean(nodePtr node)
 {
     if(node == nullptr)
 	return ;
@@ -70,3 +70,14 @@ void clean(Node *node)
     clean(node->rchild);
     delete node;
 }
+
+template <class T>
+void binaryTree<T>::print(std::ostream &output, nodePtr node) const
+{
+    if(node == nullptr)
+	return ;
+    output << node->element;
+    print(output, node->lchild);
+    print(output, node->rchild);
+}
+#endif
