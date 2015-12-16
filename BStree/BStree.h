@@ -8,44 +8,50 @@ template <class T>
 class BStree : public binaryTree<T>
 {
     public:
-	void insert(const T &_element) const;
-	void erase (const T &_element) const;
+        typedef Node<T>* nodePtr;
+	void insert(const T &_element);
+	void erase (const T &_element);
 	T findMin() const;
 	T findMax() const;
     private:
-	void    eraseElem(const T &_element, nodePtr node);
+	void    eraseElem(const T &_element);
 	nodePtr deleteMin(nodePtr node);
-}
+};
 
 template <class T>
-void BStree<T>::insert(const T &_element) const
+void BStree<T>::insert(const T &_element)
 {
-    if(root == nullptr)
+    if(binaryTree<T>::root == nullptr)
     {	
-	root = new Node<T>(_element),
-	treeSize++,
+	binaryTree<T>::root = new Node<T>(_element);
+	binaryTree<T>::treeSize++;
 	return ;
     }
 
-    nodePtr node    = new Node(_element);
-    nodePtr current = root;
+    auto node    = new Node<T>(_element);
+    auto current = binaryTree<T>::root;
     while( true )
     {
 	if( node->element < current->element )
 	    if( current->lchild )
 		current = current->lchild;
 	    else
-		current->lchild = node,
-		return ;
+		{
+		    current->lchild = node;
+		    return ;
+		}
 	else
-	    if( node-element > current->element )
+	    if( node->element > current->element )
 		if( current->rchild )
 		    current = current->rchild;
 		else
-		    current->rchild = node,
+		{
+		    current->rchild = node;
 		    return ;
+		}
 	    else
 		return ;
+    }
 }
 
 template <class T>
@@ -57,7 +63,9 @@ void BStree<T>::erase(const T &_element)
 template <class T>
 void BStree<T>::eraseElem(const T &_element)
 {
-    for(nodePtr father = current = root; current != nullptr; )
+    auto father  = binaryTree<T>::root;
+    auto current = binaryTree<T>::root;
+    for( ; current != nullptr; )
     {
 	/*find*/
 	if( current->element == _element )
@@ -65,7 +73,7 @@ void BStree<T>::eraseElem(const T &_element)
 	    /*two children*/
 	    if( current->lchild && current->rchild )
 	    {
-		nodePtr min = deleteMin(current->rchild);
+		auto min = deleteMin(current->rchild);
 		if( min == current->rchild)
 		    current->rchild = min->rchild;
 		current->element = min->element;
@@ -74,9 +82,9 @@ void BStree<T>::eraseElem(const T &_element)
 	    /*one child*/
 	    else
 	    {
-		nodePtr replace = ( current->lchild ) ? current->lchild : current->rchild;
-		if( current == root )
-		    root = replace;
+		auto replace = ( current->lchild ) ? current->lchild : current->rchild;
+		if( current == binaryTree<T>::root )
+		    binaryTree<T>::root = replace;
 		else
 		    if( father->lchild == current )
 			father->lchild = replace;
@@ -84,7 +92,7 @@ void BStree<T>::eraseElem(const T &_element)
 			father->rchild = replace;
 		delete current;
 	    }
-	    treeSize--;
+	    binaryTree<T>::treeSize--;
 	    break;
 	}//end find
 	father = current;
@@ -100,8 +108,8 @@ void BStree<T>::eraseElem(const T &_element)
 template <class T>
 typename BStree<T>::nodePtr BStree<T>::deleteMin(nodePtr node)
 {
-    nodePtr father  = node;
-    nodePtr current = node;
+    auto father  = node;
+    auto current = node;
 
     while( current->lchild != nullptr )
     {
@@ -115,5 +123,22 @@ typename BStree<T>::nodePtr BStree<T>::deleteMin(nodePtr node)
 }
 
 template <class T>
-T findMin()
+T BStree<T>::findMin() const
+{
+    auto current = binaryTree<T>::root;
+    for( ; current->lchild; )
+	current = current->lchild;
+    
+    return current->element;
+}
+
+template <class T>
+T BStree<T>::findMax() const
+{
+    auto current = binaryTree<T>::root;
+    for( ; current->rchild; )
+	current = current->rchild;
+
+    return current->element;
+}
 #endif
