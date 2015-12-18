@@ -54,7 +54,7 @@ Graph<T, SIZE>::Graph(const T *verArray, const std::vector<int> edgeArray[SIZE])
 	    Edge<T> *tmp             = new Edge<T>;
 	    tmp->vertexNum           = edgeArray[i][j];
 	    tmp->next                = verTable[i].firstEdge;
-	    verTable[i].firstEdge    = tmp;
+	    verTable[i].firstEdge    = tmp 
 	}
     }
 }
@@ -96,7 +96,10 @@ void Graph<T, SIZE>::DFS() const
     for(int i = 0; i < SIZE; i++)
     {
 	if(!visit[i])
+	{
+	    std::cout << verTable[i].element << " ";
 	    doDFS(i, visit);
+	}
     }
     std::cout << std::endl;
 }
@@ -105,11 +108,14 @@ template <class T, int SIZE>
 void Graph<T, SIZE>::doDFS(int i, std::vector<bool> &_visit) const
 {
     _visit[i] = true;
-    Vertex<T> *tmp = verTable.firstEdge;
+    Edge<T> *tmp = verTable[i].firstEdge;
     while(tmp)
     {	
 	if(!_visit[tmp->vertexNum])
-	   doDFS(tmp->vertexNum, _visit);
+	{
+	    std::cout << verTable[tmp->vertexNum].element << " ";
+	    doDFS(tmp->vertexNum, _visit);
+	}
 	tmp = tmp->next;
     }
 }
@@ -135,7 +141,7 @@ void Graph<T, SIZE>::BFS() const
 		{
 		    if( !visit[tmp->vertexNum] )
 		    {
-			std::cout << verTable[tmp->vertexNum].dara;
+			std::cout << verTable[tmp->vertexNum].element;
 			visit[tmp->vertexNum] = true;
 			Queue.push(tmp->vertexNum);
 		    }
@@ -143,5 +149,6 @@ void Graph<T, SIZE>::BFS() const
 	    }
 	}
     }
+    std::cout << std::endl;
 }
 #endif
