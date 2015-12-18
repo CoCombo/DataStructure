@@ -15,8 +15,8 @@ struct Edge
 template <class  T>
 struct Vertex
 {
-    T     element;
-    Edge *firstEdge;
+    T        element;
+    Edge<T> *firstEdge;
 };
 
 template <class T, int SIZE>
@@ -32,7 +32,7 @@ class Graph
 	void BFS  () const;
 
     private:
-	void doDFS(int , vector<bool> &) const;
+	void doDFS(int , std::vector<bool> &) const;
 	Vertex<T> verTable[SIZE];
 };
 
@@ -51,10 +51,10 @@ Graph<T, SIZE>::Graph(const T *verArray, const std::vector<int> edgeArray[SIZE])
 	verTable[i].element = verArray[i];
 	for(int j = 0; j < edgeArray[i].size(); j++)
 	{
-	    Edge *tmp             = new Edge;
-	    tmp->vertexNum        = edgeArray[i][j];
-	    tmp->next             = verTable[i].firstEdge;
-	    verTable[i].firstEdge = tmp;
+	    Edge<T> *tmp             = new Edge<T>;
+	    tmp->vertexNum           = edgeArray[i][j];
+	    tmp->next                = verTable[i].firstEdge;
+	    verTable[i].firstEdge    = tmp;
 	}
     }
 }
@@ -66,9 +66,9 @@ Graph<T, SIZE>::~Graph()
     {
 	while(verTable[i].firstEdge)
 	{
-	    Edge *tmp = verTable[i].firstEdge;
+	    Edge<T> *tmp = verTable[i].firstEdge;
 	    verTable[i].firstEdge = tmp->next;
-	    delet tmp;
+	    delete tmp;
 	}
     }
 }
@@ -79,7 +79,7 @@ void Graph<T, SIZE>::print() const
     for(int i = 0; i < SIZE; i++)
     {
 	std::cout << verTable[i].element << " ";
-	Edge *tmp = verTable.firstEdge;
+	Edge<T> *tmp = verTable[i].firstEdge;
 	while(tmp)
 	{
 	    std::cout << verTable[tmp->vertexNum].element << " ";
@@ -102,15 +102,46 @@ void Graph<T, SIZE>::DFS() const
 }
 
 template <class T, int SIZE>
-void Graph<T, SIZE>::doDFS(int i, vector<bool> &_visit) const
+void Graph<T, SIZE>::doDFS(int i, std::vector<bool> &_visit) const
 {
     _visit[i] = true;
-    Vertex *tmp = verTable.firstEdge;
+    Vertex<T> *tmp = verTable.firstEdge;
     while(tmp)
     {	
 	if(!_visit[tmp->vertexNum])
 	   doDFS(tmp->vertexNum, _visit);
 	tmp = tmp->next;
+    }
+}
+
+template <class T, int SIZE>
+void Graph<T, SIZE>::BFS() const
+{
+    std::vector<bool> visit(SIZE, false);
+    std::queue <int>  Queue;
+   
+    for(int i = 0; i < SIZE; i++)
+    {
+	if( !visit[i] )
+	{
+	    visit[i] = true;
+	    std::cout << verTable[i].element << " ";
+	    Queue.push(i);
+	    while( !Queue.empty() )
+	    {
+		int tmpFront = Queue.front();
+		Queue.pop();
+		for(Edge<T> *tmp = verTable[i].firstEdge; tmp != nullptr; tmp = tmp->next)
+		{
+		    if( !visit[tmp->vertexNum] )
+		    {
+			std::cout << verTable[tmp->vertexNum].dara;
+			visit[tmp->vertexNum] = true;
+			Queue.push(tmp->vertexNum);
+		    }
+		}
+	    }
+	}
     }
 }
 #endif
