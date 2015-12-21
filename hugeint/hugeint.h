@@ -3,44 +3,57 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 class INT
 {
     public:
-	INT(string _hugeInt) : sign(true), count(0)
+	INT(std::string _hugeInt) : sign(true), count(0)
 	{
 	    if( _hugeInt[0] == '-')
 		sign = false;
 	    for(auto bit = _hugeInt.rbegin(); bit != _hugeInt.rend() && (*bit) != '-'; bit++)
-		hugeInt.push_back(*bit),
+		hugeInt.push_back(*bit - 48),   //turn to int
 		count++;
 	}
-       ~INT();
+       //~INT();
+       
+       int  getCount() const{ return count; }
+       void print()    const;
 
-       friend INT & operator +(const INT &);
-       friend INT & operator -(const INT &);
-       friend INT & operator *(const INT &);
-       friend ITN & operator /(const INT &);
+       INT & operator +=(const INT &second);
+       INT & operator -=(const INT &second);
+       INT & operator *=(const INT &second);
+       INT & operator /=(const INT &second);
 
-       friend INT & operator ++();
-       friend INT & operator --();
+       void operator ++();
+       void operator --();
 
-       friend bool & operator > (const INT &, const INT &);
-       friend bool & operator < (const INT &, const INT &);
-       friend bool & operator ==(const INT &, const INT &);
-       friend bool & operator <=(const INT &, const INT &);
-       friend bool & operator >=(const INT &, const INT &);
-       friend bool & operator !=(const INT &, const INT &);
+       bool & operator > (const INT &second);
+       bool & operator < (const INT &second);
+       bool & operator ==(const INT &second);
+       bool & operator <=(const INT &second);
+       bool & operator >=(const INT &second);
+       bool & operator !=(const INT &second);
 
-       friend std::istream & operator >>(std::istream &input, INT &);
-       friend std::ostream & operator <<(std::ostream &output, const INT &);
+       friend std::istream & operator >>(std::istream input,        INT &second);
+       friend std::ostream & operator <<(std::ostream output, const INT &second);
     private:
-	vector<char> hugeInt;
+	std::vector<int> hugeInt;
 	bool sign;
 	int  count;
 };
 
-INT & operator +(const INT &second)
+void INT::print() const 
+{
+    if( !hugeInt.size() )
+	std::cout << "-"; //negitive int print '-'0
+    for(auto it = hugeInt.crbegin(); it != hugeInt.crend(); it++)
+	std::cout << *it << " ";
+    std::cout << std::endl;
+}
+
+INT & INT::operator +=(const INT &second)
 {
     auto bit1 = hugeInt.begin();
     auto bit2 = second.hugeInt.begin();
@@ -48,10 +61,40 @@ INT & operator +(const INT &second)
 
     while(bit1 != hugeInt.end() && bit2 != second.hugeInt.end())
     {
-	char sum;
-	sum = *bit1 + *bit2 - 96 + carry;
+	int sum;
+	sum = *bit1 + *bit2 + carry;
 	*bit1 = sum % 10;
 	carry = sum / 10;
+	bit1++;
+	bit2++;
     }
+    if( getCount() <= second.getCount() )
+	while(bit2 != second.hugeInt.end())
+	    hugeInt.push_back(*bit2);
+    else
+	return *this;
+}
+
+INT & INT::operator -=(const INT &second)
+{
+    
+}
+/* ++, -- */
+void INT::operator ++()
+{
+    hugeInt[0]++;
+}
+
+void INT::operator --()
+{
+    hugeInt[0]--;
+}
+/* >, <, ==, >=, <= */
+bool INT::operator >(const INT &second)
+{
+    if( hugeInt.getCount() > second.hugeInt.getCount() )
+	return true;
+    if( hugeInt.getCount() < second.hugeInt.getCount() )
+	return false;
 }
 #endif
